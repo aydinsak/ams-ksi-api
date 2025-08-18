@@ -7,8 +7,11 @@ use Illuminate\Http\Request;
 use App\Models\SysUser;
 use Illuminate\Validation\Rule;
 
+/* ADMIN */
+
 class UserController extends Controller
 {
+
     public function index(Request $request)
     {
         $q = $request->string('q');
