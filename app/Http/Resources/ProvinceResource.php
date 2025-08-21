@@ -15,16 +15,14 @@ class ProvinceResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        $data = [
+        return [
             'id'   => $this->id,
             'code' => $this->code ?? null,
             'name' => $this->name ?? null,
+            'cities' => $this->when(
+                $request->boolean('include_cities') && $this->relationLoaded('cities'),
+                fn() => CityMiniResource::collection($this->cities)
+            ),
         ];
-
-        if ($request->boolean('include_cities') && $this->relationLoaded('cities')) {
-            $data['cities'] = CityMiniResource::collection($this->cities);
-        }
-
-        return $data;
     }
 }

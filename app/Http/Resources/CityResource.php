@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use App\Http\Resources\mini\ProvinceMiniResource;
 
 class CityResource extends JsonResource
 {
@@ -16,10 +17,14 @@ class CityResource extends JsonResource
     {
         return [
             'id'          => $this->id,
-            'province_id' => $this->province_id ?? null,
             'name'        => $this->name ?? $this->city ?? null,
             'code'        => $this->code ?? null,
             'status'      => $this->status ?? null,
+            'province_id' => $this->province_id ?? null,
+            'province'    => $this->when(
+                $request->boolean('include_province') && $this->relationLoaded('province'),
+                fn() => new ProvinceMiniResource($this->province)
+            ),
         ];
     }
 }
