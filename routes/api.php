@@ -6,6 +6,7 @@ use App\Http\Controllers\API\Auth\AuthController;
 use App\Http\Controllers\API\RefCityController;
 use App\Http\Controllers\API\RefProvinceController;
 
+//auth
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login',    [AuthController::class, 'login']);
 
@@ -23,7 +24,6 @@ Route::get('/provinces/{id}/cities', function ($id) {
 });
 
 Route::middleware('auth:api')->group(function () {
-    //auth
     Route::get('/me', [UserController::class, 'me']);
     Route::post('/logout',   [AuthController::class, 'logout']);
 
