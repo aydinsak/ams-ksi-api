@@ -27,7 +27,6 @@ class UserResource extends JsonResource
             'perusahaan_id' => $this->perusahaan_id,
             'position_id'   => $this->position_id,
 
-            // include relasi jika diminta & sudah diload
             'perusahaan' => $this->when(
                 $request->boolean('include_perusahaan') && $this->relationLoaded('perusahaan'),
                 fn() => [
