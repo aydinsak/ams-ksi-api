@@ -7,7 +7,7 @@ use App\Http\Controllers\API\RefCityController;
 use App\Http\Controllers\API\RefProvinceController;
 
 Route::post('/register', [AuthController::class, 'register']);
-Route::post('/login',    [AuthController::class, 'login']);
+Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:10,1');
 
 // City routes
 Route::get('/cities', [RefCityController::class, 'index']);
@@ -26,11 +26,12 @@ Route::middleware('auth:api')->group(function () {
     //auth
     Route::get('/me', [UserController::class, 'me']);
     Route::post('/logout',   [AuthController::class, 'logout']);
+    Route::apiResource('users', UserController::class);
 
     // User management routes (admin)
     Route::get('/users', [UserController::class, 'index']);
-    Route::get('/users/{id}', [UserController::class, 'show']);
     Route::post('/users', [UserController::class, 'store']);
-    Route::match(['put', 'patch'], '/users/{id}', [UserController::class, 'update']);
+    Route::get('/users/{id}', [UserController::class, 'show']);
     Route::delete('/users/{id}', [UserController::class, 'destroy']);
+    Route::match(['put', 'patch'], '/users/{id}', [UserController::class, 'update']);
 });

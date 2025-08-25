@@ -33,7 +33,9 @@ class SysUser extends Authenticatable
         'image',
         'npp',
         'nik',
-        'jabatan_provider'
+        'jabatan_provider',
+        'created_by',
+        'updated_by'
     ];
 
     /**
