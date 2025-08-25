@@ -4,8 +4,9 @@ namespace App\Models\Dokumen_PKAT;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Models\SysUser;
+use App\Models\RefOrgStructs;
 
-class TransRkiaDocument extends Model
+class TransRkia extends Model
 {
     protected $table = 'trans_rkia_document';
     protected $primaryKey = 'id';
@@ -14,7 +15,7 @@ class TransRkiaDocument extends Model
     public $timestamps = true;
     protected $guarded = [];
 
-    // SysUser updated_by/created_by
+    // SysUser updated_by/created_by/pic_id
     public function creator()
     {
         return $this->belongsTo(SysUser::class, 'created_by', 'id');
@@ -23,10 +24,14 @@ class TransRkiaDocument extends Model
     {
         return $this->belongsTo(SysUser::class, 'updated_by', 'id');
     }
-
-    //rkia
-    public function rkia()
+    public function pic()
     {
-        return $this->belongsTo(TransRkia::class, 'rkia_id', 'id');
+        return $this->belongsTo(SysUser::class, 'pic_id', 'id');
+    }
+
+    //perusahanan (org_struct)
+    public function perusahaan()
+    {
+        return $this->belongsTo(RefOrgStructs::class, 'perusahaan_id', 'id');
     }
 }
