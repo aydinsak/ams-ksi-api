@@ -8,6 +8,7 @@ use App\Models\SysUser;
 use Illuminate\Validation\Rule;
 use App\Http\Resources\UserResource;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 /* ADMIN */
 
@@ -73,14 +74,16 @@ class UserController extends Controller
             'status'   => ['nullable', 'string', 'max:50'],
             'type'     => ['nullable', 'string', 'max:50'],
             'phone'    => ['nullable', 'string', 'max:255'],
-            'provider_id'   => ['nullable', 'integer'],
-            'perusahaan_id' => ['nullable', 'integer'],
-            'position_id'   => ['nullable', 'integer'],
+            'provider_id'   => ['nullable', 'integer', 'exists:ref_org_structs,id'],
+            'perusahaan_id' => ['nullable', 'integer', 'exists:ref_org_structs,id'],
+            'position_id'   => ['nullable', 'integer', 'exists:ref_positions,id'],
             'image'         => ['nullable', 'string', 'max:255'],
             'npp'           => ['nullable', 'string', 'max:255'],
             'nik'           => ['nullable', 'string', 'max:255'],
             'jabatan_provider' => ['nullable', 'string', 'max:255'],
         ]);
+
+        $data['password'] = Hash::make($data['password']);
 
         if (Auth::check()) {
             $data['created_by'] = $data['created_by'] ?? Auth::id();
@@ -88,9 +91,10 @@ class UserController extends Controller
         }
 
         $user = SysUser::create($data);
+
         return response()->json([
             'message' => 'User created successfully',
-            'user' => new UserResource($user)->response()->setStatusCode(201)
+            'user' => new UserResource($user)
         ], 201);
     }
 
@@ -102,7 +106,7 @@ class UserController extends Controller
             'name'     => ['sometimes', 'string', 'max:255'],
             'email'    => ['sometimes', 'email', 'max:255', Rule::unique('sys_users', 'email')->ignore($user->id)],
             'username' => ['nullable', 'string', 'max:255', Rule::unique('sys_users', 'username')->ignore($user->id)],
-            'password' => ['nullable', 'string', 'min:8'],
+            'password' => ['required', 'string', 'min:8'],
             'status'   => ['nullable', 'string', 'max:50'],
             'type'     => ['nullable', 'string', 'max:50'],
             'phone'    => ['nullable', 'string', 'max:255'],
@@ -115,7 +119,12 @@ class UserController extends Controller
             'jabatan_provider' => ['nullable', 'string', 'max:255'],
         ]);
 
-        if (empty($data['password'])) unset($data['password']);
+        if (!empty($data['password'])) {
+            $data['password'] = Hash::make($data['password']);
+        } else {
+            unset($data['password']);
+        }
+
         if (Auth::check()) {
             $data['updated_by'] = $data['updated_by'] ?? Auth::id();
         }
