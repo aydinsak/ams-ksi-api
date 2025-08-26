@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\SysUser;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 
 /* Auth user*/
@@ -20,7 +21,7 @@ class AuthController extends Controller
             'username' => ['nullable', 'string', 'max:255', 'unique:sys_users,username'],
             'password' => ['required', 'string', 'min:8'],
         ]);
-
+        $data['password'] = Hash::make($data['password']);
 
         $user = SysUser::create($data);
         $token = $user->createToken('register')->accessToken;
@@ -33,21 +34,34 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
-        $credentials = $request->validate('email', 'password');
+        $request->merge([
+            'login' => $request->input('login')
+                ?? $request->input('name')
+                ?? $request->input('email'),
+        ]);
 
-        if (! Auth::attempt($credentials)) {
+        $credentials = $request->validate([
+            'login' => ['required', 'string'],
+            'password' => ['required', 'string', 'min:8'],
+        ]);
+
+        $user = SysUser::where('email', $credentials['login'])
+            ->orWhere('name', $credentials['login'])
+            ->firstOrFail();
+
+        if (! $user || ! Hash::check($credentials['password'], $user->password)) {
             throw ValidationException::withMessages([
-                'email' => ['The provided credentials are incorrect.'],
+                'login' => ['The provided credentials are incorrect.'],
             ]);
         }
 
-        $user = SysUser::where('email', $credentials['email'])->firstOrFail();
         $token = $user->createToken('login')->accessToken;
 
         return response()->json([
             'message' => 'Logged in',
             'user'    => $user,
             'token'   => $token,
+            'token_type' => 'Bearer',
         ]);
     }
 

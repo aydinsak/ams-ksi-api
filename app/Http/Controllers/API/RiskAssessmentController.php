@@ -16,28 +16,26 @@ class RiskAssessmentController extends Controller
         $status       = $request->string('status');
         $perusahaanId = $request->input('perusahaan_id');
         $typeId       = $request->input('type_id');
-        $objectId     = $request->input('object_id');
-        $period       = $request->string('period');
+        $unitKerjaId     = $request->input('unit_kerja_id');
+        $periode       = $request->string('periode');
         $perPage      = (int) $request->input('per_page', 15);
 
         $with = [];
         if ($request->boolean('include_perusahaan')) $with[] = 'perusahaan:id,code,name';
-        if ($request->boolean('include_object'))     $with[] = 'object:id,code,name';
-        if ($request->boolean('include_type'))       $with[] = 'type:id,name';
-        if ($request->boolean('include_details'))    $with[] = 'details';
+        if ($request->boolean('include_unit_kerja'))     $with[] = 'unitKerja:id,code,name';
 
         $data = TransRiskAssessmentRegister::query()
             ->when(!empty($with), fn($q) => $q->with($with))
             ->when($q, fn($qq) => $qq->where(function ($w) use ($q) {
-                $w->where('code', 'like', "%$q%")
-                    ->orWhere('period', 'like', "%$q%")
-                    ->orWhere('sasaran', 'like', "%$q%");
+                $w->where('sasaran', 'like', "%$q%")
+                    ->orWhere('status', 'like', "%$q%")
+                    ->orWhere('periode', 'like', "%$q%");
             }))
-            ->when($status, fn($qq) => $qq->where('status', $status))
-            ->when($period, fn($qq) => $qq->where('period', $period))
+            ->when($request->filled('status'), fn($qq) => $qq->where('status', $status))
+            ->when($request->filled('periode'), fn($qq) => $qq->where('periode', $periode))
             ->when($perusahaanId, fn($qq) => $qq->where('perusahaan_id', $perusahaanId))
-            ->when($typeId, fn($qq) => $qq->where('type_id', $typeId))
-            ->when($objectId, fn($qq) => $qq->where('object_id', $objectId))
+            ->when($typeId,       fn($qq) => $qq->where('type_id', $typeId))
+            ->when($unitKerjaId,  fn($qq) => $qq->where('unit_kerja_id', $unitKerjaId))
             ->orderByDesc('id')
             ->paginate($perPage);
 
@@ -48,9 +46,7 @@ class RiskAssessmentController extends Controller
     {
         $with = [];
         if ($request->boolean('include_perusahaan')) $with[] = 'perusahaan:id,code,name';
-        if ($request->boolean('include_object'))     $with[] = 'object:id,code,name';
-        if ($request->boolean('include_type'))       $with[] = 'type:id,name';
-        if ($request->boolean('include_details'))    $with[] = 'details';
+        if ($request->boolean('include_unit_kerja')) $with[] = 'unitKerja:id,code,name';
 
         $row = TransRiskAssessmentRegister::with($with)->findOrFail($id);
 
@@ -61,16 +57,18 @@ class RiskAssessmentController extends Controller
     {
         $data = $request->validate([
             'perusahaan_id' => ['required', 'integer', 'exists:ref_org_structs,id'],
-            'period'        => ['required', 'string', 'max:20'],
-            'type_id'       => ['required', 'integer', 'exists:ref_type_audit,id'],
-            'object_id'     => ['required', 'integer', 'exists:ref_org_structs,id'],
+            'periode'       => ['required', 'date'],
+            'type_id'       => ['nullable', 'integer'],
+            'unit_kerja_id' => ['required', 'integer', 'exists:ref_org_structs,id'],
             'sasaran'       => ['nullable', 'string'],
             'status'        => ['nullable', 'string', 'max:30'],
-            'rev'           => ['nullable', 'integer'],
-            'code'          => ['nullable', 'string', 'max:50', Rule::unique('trans_risk_assessment_register', 'code')],
+            'version'       => ['nullable', 'integer'],
+            'risk_rating_id' => ['nullable', 'integer'],
+            'upgrade_reject' => ['nullable', 'string'],
         ]);
 
         $data['created_by'] = $request->user()->id ?? null;
+
         $row = TransRiskAssessmentRegister::create($data);
 
         return response()->json([
@@ -85,16 +83,18 @@ class RiskAssessmentController extends Controller
 
         $data = $request->validate([
             'perusahaan_id' => ['sometimes', 'integer', 'exists:ref_org_structs,id'],
-            'period'        => ['sometimes', 'string', 'max:20'],
-            'type_id'       => ['sometimes', 'integer', 'exists:ref_type_audit,id'],
-            'object_id'     => ['sometimes', 'integer', 'exists:ref_org_structs,id'],
+            'periode'       => ['sometimes', 'date'],
+            'type_id'       => ['sometimes', 'nullable', 'integer'],
+            'unit_kerja_id' => ['sometimes', 'integer', 'exists:ref_org_structs,id'],
             'sasaran'       => ['sometimes', 'nullable', 'string'],
             'status'        => ['sometimes', 'nullable', 'string', 'max:30'],
-            'rev'           => ['sometimes', 'nullable', 'integer'],
-            'code'          => ['sometimes', 'nullable', 'string', 'max:50', Rule::unique('trans_risk_assessment_register', 'code')->ignore($row->id)],
+            'version'       => ['sometimes', 'nullable', 'integer'],
+            'risk_rating_id' => ['sometimes', 'nullable', 'integer'],
+            'upgrade_reject' => ['sometimes', 'nullable', 'string'],
         ]);
 
         $data['updated_by'] = $request->user()->id ?? null;
+
         $row->update($data);
 
         return response()->json([

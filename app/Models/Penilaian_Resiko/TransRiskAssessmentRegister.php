@@ -25,12 +25,12 @@ class TransRiskAssessmentRegister extends Model
         return $this->belongsTo(SysUser::class, 'updated_by', 'id');
     }
 
-    // perusahaan/provider (org_struct)
+    // perusahaan/unitKerja (org_struct)
     public function perusahaan()
     {
         return $this->belongsTo(RefOrgStructs::class, 'perusahaan_id', 'id');
     }
-    public function provider()
+    public function unitKerja()
     {
         return $this->belongsTo(RefOrgStructs::class, 'unit_kerja_id', 'id');
     }

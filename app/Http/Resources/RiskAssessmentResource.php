@@ -15,16 +15,17 @@ class RiskAssessmentResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id'          => $this->id,
-            'code'        => $this->code,
-            'period'      => $this->period,
-            'rev'         => $this->rev,
-            'status'      => $this->status,
-            'sasaran'     => $this->sasaran,
-            'perusahaan_id' => $this->perusahaan_id,
-            'object_id'     => $this->object_id,
-            'type_id'       => $this->type_id,
+            'id'             => $this->id,
+            'periode'        => $this->periode,
+            'status'         => $this->status,
+            'sasaran'        => $this->sasaran,
+            'perusahaan_id'  => $this->perusahaan_id,
+            'unit_kerja_id'  => $this->unit_kerja_id,
+            'type_id'        => $this->type_id,
+            'risk_rating_id' => $this->risk_rating_id,
+            'upgrade_reject' => $this->upgrade_reject,
 
+            // Perusahaan (ref_org_structs)
             'perusahaan' => $this->when(
                 $request->boolean('include_perusahaan') && $this->relationLoaded('perusahaan'),
                 fn() => [
@@ -33,28 +34,15 @@ class RiskAssessmentResource extends JsonResource
                     'name' => $this->perusahaan?->name,
                 ]
             ),
-            'object' => $this->when(
-                $request->boolean('include_object') && $this->relationLoaded('object'),
+
+            // Unit Kerja (ref_org_structs)
+            'unit_kerja' => $this->when(
+                $request->boolean('include_unit_kerja') && $this->relationLoaded('unitKerja'),
                 fn() => [
-                    'id'   => $this->object?->id,
-                    'code' => $this->object?->code,
-                    'name' => $this->object?->name,
+                    'id'   => $this->unitKerja?->id,
+                    'code' => $this->unitKerja?->code,
+                    'name' => $this->unitKerja?->name,
                 ]
-            ),
-            'type' => $this->when(
-                $request->boolean('include_type') && $this->relationLoaded('type'),
-                fn() => [
-                    'id'   => $this->type?->id,
-                    'name' => $this->type?->name,
-                    'code' => $this->type?->code,
-                ]
-            ),
-            'details' => $this->when(
-                $request->boolean('include_details') && $this->relationLoaded('details'),
-                fn() => $this->details->map(fn($d) => [
-                    'id'          => $d->id,
-                    'description' => $d->description,
-                ])
             ),
         ];
     }

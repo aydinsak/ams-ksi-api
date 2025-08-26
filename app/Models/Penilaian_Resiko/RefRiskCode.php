@@ -1,12 +1,13 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Penilaian_Resiko;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\SysUser;
 
-class RefRiskType extends Model
+class RefRiskCode extends Model
 {
-    protected $table = 'ref_risk_type';
+    protected $table = 'ref_risk_code';
     protected $primaryKey = 'id';
     public $incrementing = true;
     protected $keyType = 'int';

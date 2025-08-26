@@ -4,7 +4,6 @@ namespace App\Models\Penilaian_Resiko;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Models\SysUser;
-use App\Models\RefRiskType;
 
 class TransRiskAssessmentRegisterDetail extends Model
 {
