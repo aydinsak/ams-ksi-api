@@ -98,8 +98,8 @@ class TransRkiaController extends Controller
     }
 
     /**
-     * Helper untuk membuat nomor PKAT otomatis.
-     * Format bebas; contoh: PKAT/{YEAR}/{PERUSAHAAN_ID}/{running-number 4 digit}
+     * Helper generate nomor PKAT otomatis.
+     * PKAT/{YEAR}/{PERUSAHAAN_ID}/{running-number 4 digit}
      */
     protected function generateNoAuditPlan(string $year, int $perusahaanId): string
     {

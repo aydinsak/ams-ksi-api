@@ -38,11 +38,11 @@ Route::middleware('auth:api')->group(function () {
     });
 
     // Penilaian Risiko (Risk Assessment Register CRUD)
-    Route::get('/risk-assessments',        [RiskAssessmentController::class, 'index']);
-    Route::get('/risk-assessments/{id}',   [RiskAssessmentController::class, 'show']);
-    Route::post('/risk-assessments',        [RiskAssessmentController::class, 'store']);
-    Route::match(['put', 'patch'], '/risk-assessments/{id}', [RiskAssessmentController::class, 'update']);
-    Route::delete('/risk-assessments/{id}',   [RiskAssessmentController::class, 'destroy']);
+    Route::get('/risk-assessment',        [RiskAssessmentController::class, 'index']);
+    Route::get('/risk-assessment/{id}',   [RiskAssessmentController::class, 'show']);
+    Route::post('/risk-assessment',        [RiskAssessmentController::class, 'store']);
+    Route::match(['put', 'patch'], '/risk-assessment/{id}', [RiskAssessmentController::class, 'update']);
+    Route::delete('/risk-assessment/{id}',   [RiskAssessmentController::class, 'destroy']);
 
     // PKAT (RKIA)
     Route::apiResource('pkat', TransRkiaController::class);

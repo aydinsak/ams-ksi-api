@@ -36,7 +36,7 @@ class AuthController extends Controller
     {
         $request->merge([
             'login' => $request->input('login')
-                ?? $request->input('name')
+                ?? $request->input('username')
                 ?? $request->input('email'),
         ]);
 
@@ -46,8 +46,8 @@ class AuthController extends Controller
         ]);
 
         $user = SysUser::where('email', $credentials['login'])
-            ->orWhere('name', $credentials['login'])
-            ->firstOrFail();
+            ->orWhere('username', $credentials['login'])
+            ->first();
 
         if (! $user || ! Hash::check($credentials['password'], $user->password)) {
             throw ValidationException::withMessages([
