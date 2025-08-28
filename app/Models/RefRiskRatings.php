@@ -1,14 +1,12 @@
 <?php
 
-namespace App\Models\Rencana_Biaya;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Models\SysUser;
-use App\Models\PKAT\TransRkia;
 
-class TransRencanaBiaya extends Model
+class RefRiskRatings extends Model
 {
-    protected $table = 'trans_rencana_biaya';
+    protected $table = 'ref_risk_ratings';
     protected $primaryKey = 'id';
     public $incrementing = true;
     protected $keyType = 'int';
@@ -23,11 +21,5 @@ class TransRencanaBiaya extends Model
     public function updater()
     {
         return $this->belongsTo(SysUser::class, 'updated_by', 'id');
-    }
-
-    //rkia_id
-    public function rkia()
-    {
-        return $this->belongsTo(TransRkia::class, 'rkia_id', 'id');
     }
 }

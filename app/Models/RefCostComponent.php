@@ -1,21 +1,19 @@
 <?php
 
-namespace App\Models\PKAT;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Models\SysUser;
-use App\Models\RefOrgStructs;
 
-class TransRkia extends Model
+class RefCostComponent extends Model
 {
-    protected $table = 'trans_rkia';
+    protected $table = 'ref_cost_component';
     protected $primaryKey = 'id';
     public $incrementing = true;
     protected $keyType = 'int';
     public $timestamps = true;
     protected $guarded = [];
 
-    // SysUser updated_by/created_by/pic_id
+    //created_by/updated_by
     public function creator()
     {
         return $this->belongsTo(SysUser::class, 'created_by', 'id');
@@ -24,14 +22,10 @@ class TransRkia extends Model
     {
         return $this->belongsTo(SysUser::class, 'updated_by', 'id');
     }
-    public function pic()
-    {
-        return $this->belongsTo(SysUser::class, 'pic_id', 'id');
-    }
 
-    //perusahanan (org_struct)
-    public function perusahaan()
+    //type_id
+    public function type()
     {
-        return $this->belongsTo(RefOrgStructs::class, 'perusahaan_id', 'id');
+        return $this->belongsTo(RefCostType::class, 'type_id', 'id');
     }
 }

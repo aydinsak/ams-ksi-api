@@ -6,6 +6,8 @@ use App\Http\Controllers\API\Auth\AuthController;
 use App\Http\Controllers\API\RefCityController;
 use App\Http\Controllers\API\RefProvinceController;
 use App\Http\Controllers\API\RiskAssessmentController;
+use App\Http\Controllers\API\TransRkiaController;
+use App\Http\Controllers\API\RencanaBiayaController;
 
 //auth
 Route::post('/register', [AuthController::class, 'register']);
@@ -41,4 +43,21 @@ Route::middleware('auth:api')->group(function () {
     Route::post('/risk-assessments',        [RiskAssessmentController::class, 'store']);
     Route::match(['put', 'patch'], '/risk-assessments/{id}', [RiskAssessmentController::class, 'update']);
     Route::delete('/risk-assessments/{id}',   [RiskAssessmentController::class, 'destroy']);
+
+    // PKAT (RKIA)
+    Route::apiResource('pkat', TransRkiaController::class);
+
+    // Rencana Biaya (Rencana Biaya Audit)
+    Route::apiResource('rencana-biaya', RencanaBiayaController::class)
+        ->only(['index', 'store', 'show', 'update', 'destroy']);
+    Route::prefix('rencana-biaya/{id}')->group(function () {
+        // details
+        Route::post('/details',                [RencanaBiayaController::class, 'addDetail']);
+        Route::patch('/details/{detailId}',     [RencanaBiayaController::class, 'updateDetail']);
+        Route::delete('/details/{detailId}',     [RencanaBiayaController::class, 'deleteDetail']);
+        // aktiva
+        Route::post('/aktiva',                 [RencanaBiayaController::class, 'addAktiva']);
+        Route::patch('/aktiva/{rowId}',         [RencanaBiayaController::class, 'updateAktiva']);
+        Route::delete('/aktiva/{rowId}',         [RencanaBiayaController::class, 'deleteAktiva']);
+    });
 });
