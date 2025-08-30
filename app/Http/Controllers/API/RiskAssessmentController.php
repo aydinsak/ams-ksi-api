@@ -12,45 +12,38 @@ class RiskAssessmentController extends Controller
 {
     public function index(Request $request)
     {
-        $q            = $request->string('q');
-        $status       = $request->string('status');
-        $perusahaanId = $request->input('perusahaan_id');
-        $typeId       = $request->input('type_id');
-        $unitKerjaId     = $request->input('unit_kerja_id');
-        $periode       = $request->string('periode');
+        // $q            = $request->string('q');
+        // $status       = $request->string('status');
+        // $perusahaanId = $request->input('perusahaan_id');
+        // $typeId       = $request->input('type_id');
+        // $unitKerjaId     = $request->input('unit_kerja_id');
+        // $periode       = $request->string('periode');
         $perPage      = (int) $request->input('per_page', 15);
 
-        $with = [];
-        if ($request->boolean('include_perusahaan')) $with[] = 'perusahaan:id,code,name';
-        if ($request->boolean('include_unit_kerja'))     $with[] = 'unitKerja:id,code,name';
+        // $with = [];
+        // if ($request->boolean('include_perusahaan')) $with[] = 'perusahaan:id,code,name';
+        // if ($request->boolean('include_unit_kerja'))     $with[] = 'unitKerja:id,code,name';
 
-        $data = TransRiskAssessmentRegister::query()
-            ->when(!empty($with), fn($q) => $q->with($with))
-            ->when($q, fn($qq) => $qq->where(function ($w) use ($q) {
-                $w->where('sasaran', 'like', "%$q%")
-                    ->orWhere('status', 'like', "%$q%")
-                    ->orWhere('periode', 'like', "%$q%");
-            }))
-            ->when($request->filled('status'), fn($qq) => $qq->where('status', $status))
-            ->when($request->filled('periode'), fn($qq) => $qq->where('periode', $periode))
-            ->when($perusahaanId, fn($qq) => $qq->where('perusahaan_id', $perusahaanId))
-            ->when($typeId,       fn($qq) => $qq->where('type_id', $typeId))
-            ->when($unitKerjaId,  fn($qq) => $qq->where('unit_kerja_id', $unitKerjaId))
-            ->orderByDesc('id')
-            ->paginate($perPage);
+        $query = TransRiskAssessmentRegister::with([
+            'perusahaan:id,code,name',
+            'unitKerja:id,code,name',
+            'creator:id,name,email',
+            'updater:id,name,email',
+        ])->orderByDesc('id');
 
-        return RiskAssessmentResource::collection($data);
+        return response()->json($query->paginate($perPage));
     }
 
-    public function show(Request $request, $id)
+    public function show($id)
     {
-        $with = [];
-        if ($request->boolean('include_perusahaan')) $with[] = 'perusahaan:id,code,name';
-        if ($request->boolean('include_unit_kerja')) $with[] = 'unitKerja:id,code,name';
+        $row = TransRiskAssessmentRegister::with([
+            'perusahaan:id,code,name',
+            'unitKerja:id,code,name',
+            'creator:id,name,email',
+            'updater:id,name,email',
+        ])->findOrFail($id);
 
-        $row = TransRiskAssessmentRegister::with($with)->findOrFail($id);
-
-        return new RiskAssessmentResource($row);
+        return response()->json($row);
     }
 
     public function store(Request $request)

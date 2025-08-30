@@ -8,6 +8,7 @@ use App\Http\Controllers\API\RefProvinceController;
 use App\Http\Controllers\API\RiskAssessmentController;
 use App\Http\Controllers\API\TransRkiaController;
 use App\Http\Controllers\API\RencanaBiayaController;
+use App\Http\Controllers\API\TransRkiaDocumentController;
 
 //auth
 Route::post('/register', [AuthController::class, 'register']);
@@ -60,4 +61,12 @@ Route::middleware('auth:api')->group(function () {
         Route::patch('/aktiva/{rowId}',         [RencanaBiayaController::class, 'updateAktiva']);
         Route::delete('/aktiva/{rowId}',         [RencanaBiayaController::class, 'deleteAktiva']);
     });
+
+    // PKAT Documents
+    Route::apiResource('pkat.documents', TransRkiaDocumentController::class)
+        ->only(['index', 'store', 'show', 'update', 'destroy']);
+
+    Route::get('pkat/{rkia}/documents/{document}/cc',          [TransRkiaDocumentController::class, 'listCc']);
+    Route::post('pkat/{rkia}/documents/{document}/cc',          [TransRkiaDocumentController::class, 'addCc']);
+    Route::delete('pkat/{rkia}/documents/{document}/cc/{userId}', [TransRkiaDocumentController::class, 'removeCc']);
 });

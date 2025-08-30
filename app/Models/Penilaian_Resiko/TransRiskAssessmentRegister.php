@@ -5,6 +5,7 @@ namespace App\Models\Penilaian_Resiko;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\SysUser;
 use App\Models\RefOrgStructs;
+use App\Models\RefTypeAudit;
 
 class TransRiskAssessmentRegister extends Model
 {
@@ -33,5 +34,11 @@ class TransRiskAssessmentRegister extends Model
     public function unitKerja()
     {
         return $this->belongsTo(RefOrgStructs::class, 'unit_kerja_id', 'id');
+    }
+
+    //type_id
+    public function type()
+    {
+        return $this->belongsTo(RefTypeAudit::class, 'type_id', 'id');
     }
 }
