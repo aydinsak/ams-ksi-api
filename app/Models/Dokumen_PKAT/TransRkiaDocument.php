@@ -4,6 +4,7 @@ namespace App\Models\Dokumen_PKAT;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Models\SysUser;
+use App\Models\PKAT\TransRkia;
 
 class TransRkiaDocument extends Model
 {

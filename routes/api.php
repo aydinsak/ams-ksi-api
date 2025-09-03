@@ -63,10 +63,5 @@ Route::middleware('auth:api')->group(function () {
     });
 
     // PKAT Documents
-    Route::apiResource('pkat.documents', TransRkiaDocumentController::class)
-        ->only(['index', 'store', 'show', 'update', 'destroy']);
-
-    Route::get('pkat/{rkia}/documents/{document}/cc',          [TransRkiaDocumentController::class, 'listCc']);
-    Route::post('pkat/{rkia}/documents/{document}/cc',          [TransRkiaDocumentController::class, 'addCc']);
-    Route::delete('pkat/{rkia}/documents/{document}/cc/{userId}', [TransRkiaDocumentController::class, 'removeCc']);
+    Route::apiResource('dokumen-rencana', TransRkiaDocumentController::class);
 });
