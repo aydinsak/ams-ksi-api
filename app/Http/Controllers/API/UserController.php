@@ -22,17 +22,11 @@ class UserController extends Controller
         $perusahaanId = $request->query('perusahaan_id');
         $providerId   = $request->query('provider_id');
         $positionId   = $request->query('position_id');
-        $perPage      = (int) $request->query('per_page', 15);
+        $perPage      = 15;
 
-        $with = [];
-        if ($request->boolean('include_perusahaan')) $with[] = 'perusahaan:id,code,name';
-        if ($request->boolean('include_provider'))   $with[] = 'provider:id,code,name';
-        if ($request->boolean('include_position'))   $with[] = 'position:id,code,name';
-        if ($request->boolean('include_creator'))    $with[] = 'creator:id,name,email';
-        if ($request->boolean('include_updater'))    $with[] = 'updater:id,name,email';
+        $with = ['perusahaan', 'provider', 'position'];
 
-        $query = SysUser::query()
-            ->when(!empty($with), fn($q2) => $q2->with($with))
+        $users = SysUser::with($with)
             ->when($q !== '', function ($qq) use ($q) {
                 $qq->where(function ($w) use ($q) {
                     $w->where('name', 'like', "%{$q}%")
@@ -40,27 +34,23 @@ class UserController extends Controller
                         ->orWhere('username', 'like', "%{$q}%");
                 });
             })
-            ->when($request->filled('status'), fn($qq) => $qq->where('status', $status))
-            ->when($request->filled('type'),   fn($qq) => $qq->where('type', $type))
+            ->when($status,       fn($qq) => $qq->where('status', $status))
+            ->when($type,         fn($qq) => $qq->where('type', $type))
             ->when($perusahaanId, fn($qq) => $qq->where('perusahaan_id', $perusahaanId))
             ->when($providerId,   fn($qq) => $qq->where('provider_id', $providerId))
             ->when($positionId,   fn($qq) => $qq->where('position_id', $positionId))
-            ->orderBy('id');
+            ->orderBy('id')
+            ->paginate($perPage);
 
-        return UserResource::collection($query->paginate($perPage));
+        return response()->json($users);
     }
 
     public function show(Request $request, $id)
     {
-        $with = [];
-        if ($request->boolean('include_perusahaan')) $with[] = 'perusahaan:id,code,name';
-        if ($request->boolean('include_provider'))   $with[] = 'provider:id,code,name';
-        if ($request->boolean('include_position'))   $with[] = 'position:id,code,name';
-        if ($request->boolean('include_creator'))    $with[] = 'creator:id,name,email';
-        if ($request->boolean('include_updater'))    $with[] = 'updater:id,name,email';
+        $with = ['perusahaan', 'provider', 'position'];
 
         $user = SysUser::when(!empty($with), fn($q) => $q->with($with))->findOrFail($id);
-        return new UserResource($user);
+        return response()->json($user);
     }
 
     public function store(Request $request)
@@ -90,7 +80,7 @@ class UserController extends Controller
         $user = SysUser::create($data);
         return response()->json([
             'message' => 'User created successfully',
-            'user' => new UserResource($user)->response()->setStatusCode(201)
+            'user' => new UserResource($user)
         ], 201);
     }
 
@@ -116,6 +106,7 @@ class UserController extends Controller
         ]);
 
         if (empty($data['password'])) unset($data['password']);
+
         if (Auth::check()) {
             $data['updated_by'] = $data['updated_by'] ?? Auth::id();
         }
@@ -123,6 +114,7 @@ class UserController extends Controller
         $user->update($data);
         return new UserResource($user);
     }
+
     public function destroy($id)
     {
         SysUser::findOrFail($id)->delete();
@@ -131,12 +123,9 @@ class UserController extends Controller
 
     public function me(Request $request)
     {
-        $with = [];
-        if ($request->boolean('include_perusahaan')) $with[] = 'perusahaan:id,code,name';
-        if ($request->boolean('include_provider'))   $with[] = 'provider:id,code,name';
-        if ($request->boolean('include_position'))   $with[] = 'position:id,code,name';
+        $with = ['perusahaan', 'provider', 'position'];
 
         $user = SysUser::when(!empty($with), fn($q) => $q->with($with))->find($request->user()->id);
-        return new UserResource($user);
+        return response()->json($user);
     }
 }

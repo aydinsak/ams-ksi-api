@@ -20,9 +20,9 @@ class RencanaBiayaController extends Controller
      */
     public function index(Request $request)
     {
-        $year         = $request->query('year');           // dari trans_rkia.year
-        $perusahaanId = $request->query('perusahaan_id');  // dari trans_rkia.perusahaan_id
-        $status       = $request->query('status');         // dari trans_rencana_biaya.status
+        $year         = $request->query('year');
+        $perusahaanId = $request->query('perusahaan_id');
+        $status       = $request->query('status');
         $q            = (string) $request->query('q', '');
         $perPage      = (int) $request->query('per_page', 15);
 
@@ -41,12 +41,9 @@ class RencanaBiayaController extends Controller
             })
             ->orderByDesc('id');
 
-        // ambil data
+
         $page = $query->paginate($perPage);
 
-        // hitung total biaya per item:
-        //   - Detail: (jumlah_unit * harga_unit) atau jika kosong, jumlahkan TW1..TW4 yang numeric
-        //   - Aktiva: (qty * harga_satuan)
         $page->getCollection()->transform(function ($item) {
             $detail = TransRencanaBiayaDetail::where('rencana_biaya_id', $item->id)->get(['tw_1', 'tw_2', 'tw_3', 'tw_4', 'jumlah_unit', 'harga_unit']);
             $aktiva = TransRencanaBiayaAktiva::where('rencana_biaya_id', $item->id)->get(['qty', 'harga_satuan']);
@@ -85,7 +82,6 @@ class RencanaBiayaController extends Controller
     /**
      * POST /api/rencana-biaya
      * Body: rkia_id, description?, status?, version?
-     * Catatan: dokumen ini secara bisnis normalnya dibuat dari PKAT; endpoint ini disediakan kalau butuh manual create.
      */
     public function store(Request $request)
     {
