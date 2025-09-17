@@ -1,24 +1,18 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Penilaian_Resiko;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\SysUser;
 
-class RefProvince extends Model
+class RefRiskCode extends Model
 {
-    protected $table = 'ref_province';
+    protected $table = 'ref_risk_code';
     protected $primaryKey = 'id';
     public $incrementing = true;
     protected $keyType = 'int';
     public $timestamps = true;
-
     protected $guarded = [];
-
-    //include cities
-    public function cities()
-    {
-        return $this->hasMany(RefCity::class, 'province_id', 'id');
-    }
 
     // SysUser updated_by/created_by
     public function creator()

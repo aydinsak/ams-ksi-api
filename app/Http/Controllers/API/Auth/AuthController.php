@@ -20,8 +20,8 @@ class AuthController extends Controller
             'username' => ['nullable', 'string', 'max:255', 'unique:sys_users,username'],
             'password' => ['required', 'string', 'min:8'],
         ]);
-
         $data['password'] = Hash::make($data['password']);
+
         $user = SysUser::create($data);
         $token = $user->createToken('register')->accessToken;
 
@@ -47,8 +47,8 @@ class AuthController extends Controller
         ]);
 
         $user = SysUser::where('email', $credentials['login'])
-        ->orWhere('username', $credentials['login'])
-        ->firstOrFail();
+            ->orWhere('username', $credentials['login'])
+            ->first();
 
         if (! $user || ! Hash::check($credentials['password'], $user->password)) {
             throw ValidationException::withMessages([

@@ -81,13 +81,11 @@ class SysUser extends Authenticatable
         return $this->belongsTo(RefPositions::class, 'position_id', 'id');
     }
 
-    // Dibuat oleh user siapa
+    // creator/updater
     public function creator()
     {
         return $this->belongsTo(self::class, 'created_by', 'id');
     }
-
-    // Diperbarui oleh user siapa
     public function updater()
     {
         return $this->belongsTo(self::class, 'updated_by', 'id');

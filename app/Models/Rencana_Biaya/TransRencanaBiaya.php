@@ -1,26 +1,21 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Rencana_Biaya;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\SysUser;
+use App\Models\PKAT\TransRkia;
 
-class RefProvince extends Model
+class TransRencanaBiaya extends Model
 {
-    protected $table = 'ref_province';
+    protected $table = 'trans_rencana_biaya';
     protected $primaryKey = 'id';
     public $incrementing = true;
     protected $keyType = 'int';
     public $timestamps = true;
-
     protected $guarded = [];
 
-    //include cities
-    public function cities()
-    {
-        return $this->hasMany(RefCity::class, 'province_id', 'id');
-    }
-
-    // SysUser updated_by/created_by
+    //created_by/updated_by
     public function creator()
     {
         return $this->belongsTo(SysUser::class, 'created_by', 'id');
@@ -28,5 +23,11 @@ class RefProvince extends Model
     public function updater()
     {
         return $this->belongsTo(SysUser::class, 'updated_by', 'id');
+    }
+
+    //rkia_id
+    public function rkia()
+    {
+        return $this->belongsTo(TransRkia::class, 'rkia_id', 'id');
     }
 }

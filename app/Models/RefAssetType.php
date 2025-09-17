@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class TransRencanaBiayaCc extends Model
+class RefAssetType extends Model
 {
     //
 }
