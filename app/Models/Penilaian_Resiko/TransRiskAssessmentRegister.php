@@ -41,4 +41,9 @@ class TransRiskAssessmentRegister extends Model
     {
         return $this->belongsTo(RefTypeAudit::class, 'type_id', 'id');
     }
+
+    // details
+    public function details(){
+        return $this->hasMany(TransRiskAssessmentRegisterDetail::class, 'risk_register_id', 'id');
+    }
 }

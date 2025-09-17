@@ -44,6 +44,14 @@ class RiskAssessmentResource extends JsonResource
                     'name' => $this->unitKerja?->name,
                 ]
             ),
+
+            // details (TransRiskAssessmentRegisterDetail)
+            'details' => $this->when(
+                $request->boolean('include_details') && $this->relationLoaded('details'),
+                fn() => [
+                    'data' => $this->details
+                ]
+            ),
         ];
     }
 }

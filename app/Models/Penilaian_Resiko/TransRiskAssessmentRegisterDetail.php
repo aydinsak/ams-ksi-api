@@ -24,7 +24,7 @@ class TransRiskAssessmentRegisterDetail extends Model
         return $this->belongsTo(SysUser::class, 'updated_by', 'id');
     }
 
-    // register
+    // register (trans_risk_assessment_register)
     public function register()
     {
         return $this->belongsTo(TransRiskAssessmentRegister::class, 'risk_register_id', 'id');

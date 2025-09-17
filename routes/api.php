@@ -5,7 +5,8 @@ use App\Http\Controllers\API\UserController;
 use App\Http\Controllers\API\Auth\AuthController;
 use App\Http\Controllers\API\RefCityController;
 use App\Http\Controllers\API\RefProvinceController;
-use App\Http\Controllers\API\RiskAssessmentController;
+use App\Http\Controllers\API\Penilaian_Resiko\RiskAssessmentController;
+use App\Http\Controllers\API\Penilaian_Resiko\RiskAssessmentDetailController;
 use App\Http\Controllers\API\TransRkiaController;
 use App\Http\Controllers\API\RencanaBiayaController;
 use App\Http\Controllers\API\TransRkiaDocumentController;
@@ -31,18 +32,22 @@ Route::middleware('auth:api')->group(function () {
     // Province routes
     Route::get('/provinces', [RefProvinceController::class, 'index']);
     Route::get('/provinces/{id}', [RefProvinceController::class, 'show']);
-    //testing
-    Route::get('/provinces/{id}/cities', function ($id) {
-        $cities = \App\Models\RefCity::where('province_id', $id)->orderBy('id')->get();
-        return \App\Http\Resources\mini\CityMiniResource::collection($cities);
-    });
 
-    // Penilaian Risiko (Risk Assessment Register CRUD)
+    // Penilaian Risiko (Risk Assessment)
     Route::get('/risk-assessment',        [RiskAssessmentController::class, 'index']);
     Route::get('/risk-assessment/{id}',   [RiskAssessmentController::class, 'show']);
     Route::post('/risk-assessment',        [RiskAssessmentController::class, 'store']);
     Route::match(['put', 'patch'], '/risk-assessment/{id}', [RiskAssessmentController::class, 'update']);
     Route::delete('/risk-assessment/{id}',   [RiskAssessmentController::class, 'destroy']);
+
+    // penilaian risiko details (Risk Assessment Details)
+    Route::prefix('risk-assessment/{riskRegisterId}/detail')->group(function () {
+        Route::get('/',                 [RiskAssessmentDetailController::class, 'index']);
+        Route::post('/',                [RiskAssessmentDetailController::class, 'store']);
+        Route::get('/{detailId}',       [RiskAssessmentDetailController::class, 'show']);
+        Route::match(['put', 'patch'], '/{detailId}', [RiskAssessmentDetailController::class, 'update']);
+        Route::delete('/{detailId}',    [RiskAssessmentDetailController::class, 'destroy']);
+    });
 
     // PKAT (RKIA)
     Route::apiResource('pkat', TransRkiaController::class);

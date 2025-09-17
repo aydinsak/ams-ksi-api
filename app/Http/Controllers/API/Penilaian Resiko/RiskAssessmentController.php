@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\API;
+namespace App\Http\Controllers\API\Penilaian_Resiko;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\RiskAssessmentResource;
@@ -12,23 +12,12 @@ class RiskAssessmentController extends Controller
 {
     public function index(Request $request)
     {
-        // $q            = $request->string('q');
-        // $status       = $request->string('status');
-        // $perusahaanId = $request->input('perusahaan_id');
-        // $typeId       = $request->input('type_id');
-        // $unitKerjaId     = $request->input('unit_kerja_id');
-        // $periode       = $request->string('periode');
         $perPage      = (int) $request->input('per_page', 15);
-
-        // $with = [];
-        // if ($request->boolean('include_perusahaan')) $with[] = 'perusahaan:id,code,name';
-        // if ($request->boolean('include_unit_kerja'))     $with[] = 'unitKerja:id,code,name';
-
         $query = TransRiskAssessmentRegister::with([
-            'perusahaan:id,code,name',
-            'unitKerja:id,code,name',
-            'creator:id,name,email',
-            'updater:id,name,email',
+            'perusahaan',
+            'unitKerja',
+            'creator',
+            'updater',
         ])->orderByDesc('id');
 
         return response()->json($query->paginate($perPage));
@@ -37,10 +26,11 @@ class RiskAssessmentController extends Controller
     public function show($id)
     {
         $row = TransRiskAssessmentRegister::with([
-            'perusahaan:id,code,name',
-            'unitKerja:id,code,name',
-            'creator:id,name,email',
-            'updater:id,name,email',
+            'perusahaan',
+            'unitKerja',
+            'creator',
+            'updater',
+            'details'
         ])->findOrFail($id);
 
         return response()->json($row);
