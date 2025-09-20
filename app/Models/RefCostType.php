@@ -4,23 +4,16 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class RefProvince extends Model
+class RefCostType extends Model
 {
-    protected $table = 'ref_province';
+    protected $table = 'ref_cost_type';
     protected $primaryKey = 'id';
     public $incrementing = true;
     protected $keyType = 'int';
     public $timestamps = true;
-
     protected $guarded = [];
 
-    //include cities
-    public function cities()
-    {
-        return $this->hasMany(RefCity::class, 'province_id', 'id');
-    }
-
-    // SysUser updated_by/created_by
+    //created_by/updated_by
     public function creator()
     {
         return $this->belongsTo(SysUser::class, 'created_by', 'id');

@@ -20,12 +20,11 @@ class RefPositions extends Model
         return $this->hasMany(SysUser::class, 'position_id', 'id');
     }
 
-    // creator/updater (kalau dipakai)
+    // creator/updater
     public function creator()
     {
         return $this->belongsTo(SysUser::class, 'created_by', 'id');
     }
-
     public function updater()
     {
         return $this->belongsTo(SysUser::class, 'updated_by', 'id');

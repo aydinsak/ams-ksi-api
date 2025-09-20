@@ -1,26 +1,21 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Rencana_Biaya;
 
+use App\Models\RefAssetType;
+use App\Models\SysUser;
 use Illuminate\Database\Eloquent\Model;
 
-class RefProvince extends Model
+class TransRencanaBiayaAktiva extends Model
 {
-    protected $table = 'ref_province';
+    protected $table = 'trans_rencana_biaya_aktiva';
     protected $primaryKey = 'id';
     public $incrementing = true;
     protected $keyType = 'int';
     public $timestamps = true;
-
     protected $guarded = [];
 
-    //include cities
-    public function cities()
-    {
-        return $this->hasMany(RefCity::class, 'province_id', 'id');
-    }
-
-    // SysUser updated_by/created_by
+    //created_by/updated_by
     public function creator()
     {
         return $this->belongsTo(SysUser::class, 'created_by', 'id');
@@ -28,5 +23,11 @@ class RefProvince extends Model
     public function updater()
     {
         return $this->belongsTo(SysUser::class, 'updated_by', 'id');
+    }
+
+    //jenis_aktiva_id
+    public function jenisAktiva()
+    {
+        return $this->belongsTo(RefAssetType::class, 'jenis_aktiva_id', 'id');
     }
 }
