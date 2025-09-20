@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\API;
+namespace App\Http\Controllers\API\Dokumen_PKAT;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;

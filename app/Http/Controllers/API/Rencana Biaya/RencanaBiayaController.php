@@ -32,7 +32,6 @@ class RencanaBiayaController extends Controller
             }])
             ->when($status, fn($qq) => $qq->where('status', $status))
             ->when($q, fn($qq) => $qq->where('description', 'like', "%$q%"))
-            // join ke trans_rkia untuk filter tahun & perusahaan
             ->when($year || $perusahaanId, function ($qq) use ($year, $perusahaanId) {
                 $qq->whereHas('rkia', function ($w) use ($year, $perusahaanId) {
                     if ($year)         $w->where('year', $year);
@@ -60,7 +59,7 @@ class RencanaBiayaController extends Controller
                 $tw4 = is_numeric($d->tw_4) ? (float)$d->tw_4 : 0;
                 $byTriwulan = $tw1 + $tw2 + $tw3 + $tw4;
 
-                $sumDetail += max($byJumlahHarga, $byTriwulan); // pilih skema isi yang dipakai
+                $sumDetail += max($byJumlahHarga, $byTriwulan);
             }
 
             $sumAktiva = 0;
@@ -79,10 +78,6 @@ class RencanaBiayaController extends Controller
         return response()->json($page);
     }
 
-    /**
-     * POST /api/rencana-biaya
-     * Body: rkia_id, description?, status?, version?
-     */
     public function store(Request $request)
     {
         $data = $request->validate([
@@ -102,10 +97,6 @@ class RencanaBiayaController extends Controller
         return response()->json(['message' => 'Created', 'data' => $rb->load('rkia')], 201);
     }
 
-    /**
-     * GET /api/rencana-biaya/{id}
-     * return header + details + aktiva
-     */
     public function show($id)
     {
         $rb = TransRencanaBiaya::with('rkia')->findOrFail($id);
@@ -122,9 +113,6 @@ class RencanaBiayaController extends Controller
         ]);
     }
 
-    /**
-     * PATCH /api/rencana-biaya/{id}
-     */
     public function update(Request $request, $id)
     {
         $rb = TransRencanaBiaya::findOrFail($id);
@@ -141,9 +129,6 @@ class RencanaBiayaController extends Controller
         return response()->json(['message' => 'Updated', 'data' => $rb->fresh('rkia')]);
     }
 
-    /**
-     * DELETE /api/rencana-biaya/{id}
-     */
     public function destroy($id)
     {
         $rb = TransRencanaBiaya::findOrFail($id);
@@ -153,10 +138,6 @@ class RencanaBiayaController extends Controller
 
     /* ===================== DETAILS ===================== */
 
-    /**
-     * POST /api/rencana-biaya/{id}/details
-     * Body minimal: komponen_biaya_id
-     */
     public function addDetail(Request $request, $id)
     {
         $rb = TransRencanaBiaya::findOrFail($id);
@@ -183,9 +164,6 @@ class RencanaBiayaController extends Controller
         return response()->json(['message' => 'Detail Added', 'data' => $detail], 201);
     }
 
-    /**
-     * PATCH /api/rencana-biaya/{id}/details/{detailId}
-     */
     public function updateDetail(Request $request, $id, $detailId)
     {
         $rb = TransRencanaBiaya::findOrFail($id);
@@ -210,9 +188,6 @@ class RencanaBiayaController extends Controller
         return response()->json(['message' => 'Detail Updated', 'data' => $detail->fresh()]);
     }
 
-    /**
-     * DELETE /api/rencana-biaya/{id}/details/{detailId}
-     */
     public function deleteDetail($id, $detailId)
     {
         $rb = TransRencanaBiaya::findOrFail($id);
@@ -223,10 +198,6 @@ class RencanaBiayaController extends Controller
     }
 
     /* ===================== AKTIVA ===================== */
-
-    /**
-     * POST /api/rencana-biaya/{id}/aktiva
-     */
     public function addAktiva(Request $request, $id)
     {
         $rb = TransRencanaBiaya::findOrFail($id);
@@ -248,9 +219,6 @@ class RencanaBiayaController extends Controller
         return response()->json(['message' => 'Aktiva Added', 'data' => $row], 201);
     }
 
-    /**
-     * PATCH /api/rencana-biaya/{id}/aktiva/{rowId}
-     */
     public function updateAktiva(Request $request, $id, $rowId)
     {
         $rb = TransRencanaBiaya::findOrFail($id);
@@ -270,9 +238,6 @@ class RencanaBiayaController extends Controller
         return response()->json(['message' => 'Aktiva Updated', 'data' => $row->fresh()]);
     }
 
-    /**
-     * DELETE /api/rencana-biaya/{id}/aktiva/{rowId}
-     */
     public function deleteAktiva($id, $rowId)
     {
         $rb = TransRencanaBiaya::findOrFail($id);

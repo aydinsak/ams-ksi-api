@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\API;
+namespace App\Http\Controllers\API\PKAT;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -97,10 +97,6 @@ class TransRkiaController extends Controller
         return response()->json(['message' => 'Deleted']);
     }
 
-    /**
-     * Helper generate nomor PKAT otomatis.
-     * PKAT/{YEAR}/{PERUSAHAAN_ID}/{running-number 4 digit}
-     */
     protected function generateNoAuditPlan(string $year, int $perusahaanId): string
     {
         $countThisYear = TransRkia::where('year', $year)->where('perusahaan_id', $perusahaanId)->count();

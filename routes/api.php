@@ -7,9 +7,9 @@ use App\Http\Controllers\API\RefCityController;
 use App\Http\Controllers\API\RefProvinceController;
 use App\Http\Controllers\API\Penilaian_Resiko\RiskAssessmentController;
 use App\Http\Controllers\API\Penilaian_Resiko\RiskAssessmentDetailController;
-use App\Http\Controllers\API\TransRkiaController;
+use App\Http\Controllers\API\PKAT\TransRkiaController;
 use App\Http\Controllers\API\RencanaBiayaController;
-use App\Http\Controllers\API\TransRkiaDocumentController;
+use App\Http\Controllers\API\Dokumen_PKAT\TransRkiaDocumentController;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login',    [AuthController::class, 'login']);
