@@ -4,11 +4,8 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\SuratPemberitahuanResource;
-use App\Http\Resources\SuratPemberitahuanMiniResource;
 use App\Models\TransAssignment;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Validation\Rule;
 
 class SuratPemberitahuanController extends Controller
 {
@@ -78,10 +75,6 @@ class SuratPemberitahuanController extends Controller
 
         $page = $query->paginate($perPage)->appends($request->query());
 
-        if ($request->boolean('mini')) {
-            $page->loadMissing(['summary.rkia', 'summary.object']);
-            return SuratPemberitahuanMiniResource::collection($page);
-        }
         return SuratPemberitahuanResource::collection($page);
     }
 
@@ -107,11 +100,6 @@ class SuratPemberitahuanController extends Controller
         }
 
         $record = TransAssignment::with($with)->findOrFail($id);
-
-        if ($request->boolean('mini')) {
-            $record->loadMissing(['summary.rkia','summary.object']);
-            return new SuratPemberitahuanMiniResource($record);
-        }
 
         return new SuratPemberitahuanResource($record);
     }
