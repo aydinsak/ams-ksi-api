@@ -10,6 +10,8 @@ use App\Http\Controllers\API\Penilaian_Resiko\RiskAssessmentDetailController;
 use App\Http\Controllers\API\PKAT\TransRkiaController;
 use App\Http\Controllers\API\RencanaBiayaController;
 use App\Http\Controllers\API\Dokumen_PKAT\TransRkiaDocumentController;
+use App\Http\Controllers\API\SuratPemberitahuanController;
+use App\Http\Controllers\API\ProgramAuditController;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login',    [AuthController::class, 'login']);
@@ -68,4 +70,10 @@ Route::middleware('auth:api')->group(function () {
 
     // PKAT Documents
     Route::apiResource('dokumen-rencana', TransRkiaDocumentController::class);
+
+    Route::get('/surat-pemberitahuan',        [SuratPemberitahuanController::class, 'index']);
+    Route::get('/surat-pemberitahuan/{id}',   [SuratPemberitahuanController::class, 'show']);
+
+    Route::get('/program-audit',        [ProgramAuditController::class, 'index']);
+    Route::get('/program-audit/{id}',   [ProgramAuditController::class, 'show']);
 });
