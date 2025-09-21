@@ -13,11 +13,6 @@ use App\Models\PKAT\TransRkia;
 
 class RencanaBiayaController extends Controller
 {
-    /**
-     * GET /api/rencana-biaya
-     * Filter: year, perusahaan_id, status, q, per_page
-     * Output: paginated list + aggregate total_biaya per rencana
-     */
     public function index(Request $request)
     {
         $year         = $request->query('year');
