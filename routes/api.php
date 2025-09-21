@@ -8,10 +8,10 @@ use App\Http\Controllers\API\RefProvinceController;
 use App\Http\Controllers\API\Penilaian_Resiko\RiskAssessmentController;
 use App\Http\Controllers\API\Penilaian_Resiko\RiskAssessmentDetailController;
 use App\Http\Controllers\API\PKAT\TransRkiaController;
-use App\Http\Controllers\API\RencanaBiayaController;
 use App\Http\Controllers\API\Dokumen_PKAT\TransRkiaDocumentController;
 use App\Http\Controllers\API\Surat_Pemberitahuan\SuratPemberitahuanController;
 use App\Http\Controllers\API\Program_Audit\ProgramAuditController;
+use App\Http\Controllers\API\Rencana_Biaya\RencanaBiayaController;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login',    [AuthController::class, 'login']);
@@ -35,20 +35,22 @@ Route::middleware('auth:api')->group(function () {
     Route::get('/provinces', [RefProvinceController::class, 'index']);
     Route::get('/provinces/{id}', [RefProvinceController::class, 'show']);
 
-    // Penilaian Risiko (Risk Assessment)
-    Route::get('/risk-assessment',        [RiskAssessmentController::class, 'index']);
-    Route::get('/risk-assessment/{id}',   [RiskAssessmentController::class, 'show']);
-    Route::post('/risk-assessment',        [RiskAssessmentController::class, 'store']);
-    Route::match(['put', 'patch'], '/risk-assessment/{id}', [RiskAssessmentController::class, 'update']);
-    Route::delete('/risk-assessment/{id}',   [RiskAssessmentController::class, 'destroy']);
+    // Penilaian Risiko (Risk Assessment) dan details
+    Route::prefix('risk-assessment')->group(function () {
+        Route::get('/',        [RiskAssessmentController::class, 'index']);
+        Route::get('/{id}',   [RiskAssessmentController::class, 'show']);
+        Route::post('/',        [RiskAssessmentController::class, 'store']);
+        Route::match(['put', 'patch'], '/{id}', [RiskAssessmentController::class, 'update']);
+        Route::delete('/{id}',   [RiskAssessmentController::class, 'destroy']);
 
-    // penilaian risiko details (Risk Assessment Details)
-    Route::prefix('risk-assessment/{riskRegisterId}/detail')->group(function () {
-        Route::get('/',                 [RiskAssessmentDetailController::class, 'index']);
-        Route::post('/',                [RiskAssessmentDetailController::class, 'store']);
-        Route::get('/{detailId}',       [RiskAssessmentDetailController::class, 'show']);
-        Route::match(['put', 'patch'], '/{detailId}', [RiskAssessmentDetailController::class, 'update']);
-        Route::delete('/{detailId}',    [RiskAssessmentDetailController::class, 'destroy']);
+        // details
+        Route::prefix('{riskRegisterId}/detail')->group(function () {
+            Route::get('/',                 [RiskAssessmentDetailController::class, 'index']);
+            Route::post('/',                [RiskAssessmentDetailController::class, 'store']);
+            Route::get('/{detailId}',       [RiskAssessmentDetailController::class, 'show']);
+            Route::match(['put', 'patch'], '/{detailId}', [RiskAssessmentDetailController::class, 'update']);
+            Route::delete('/{detailId}',    [RiskAssessmentDetailController::class, 'destroy']);
+        });
     });
 
     // PKAT (RKIA)
